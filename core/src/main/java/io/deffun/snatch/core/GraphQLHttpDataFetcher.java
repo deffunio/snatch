@@ -13,6 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.StringEscapeUtils;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,8 +45,12 @@ public final class GraphQLHttpDataFetcher implements DataFetcher<Object> {
         ExecutionInput executionInput = newExecutionInput
                 .variables(environment.getVariables())
                 .build();
+        List<Pair<String, String>> allHeaders = new ArrayList<>(headers);
+        if (environment.getLocalContext() instanceof SnatchContext ctx) {
+            allHeaders.addAll(ctx.headers());
+        }
         GraphQLHttpClient httpClient = GraphQLHttpClient.createClient(uri);
-        ExecutionResult result = httpClient.post(executionInput, headers);
+        ExecutionResult result = httpClient.post(executionInput, allHeaders);
         return DataFetcherResult.newResult()
                 .data(result.getData())
                 .errors(result.getErrors())

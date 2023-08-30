@@ -58,3 +58,11 @@ Now you can execute a query like this:
 ```java
 ExecutionResult executionResult = graphQL.execute(executionInput);
 ```
+
+Use `localContext` to pass additional headers:
+```java
+ExecutionInput executionInput = ExecutionInput.newExecutionInput()
+        .localContext(new SnatchContext(List.of(Pair.of("key", "val"))))
+        .query(...)
+        .build();
+```
